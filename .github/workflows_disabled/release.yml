@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: release
+on:
+  workflow_dispatch:
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build -j
+      - name: Package
+        run: |
+          mkdir -p dist
+          cpack || true
+          echo "Generate checksums"
+          for f in $(find build -type f -executable -o -name '*.tar*' -o -name '*.zip'); do
+            sha256sum "$f" >> dist/CHECKSUMS.txt
+          done
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: biosimx-release
+          path: |
+            build/**
+            dist/**

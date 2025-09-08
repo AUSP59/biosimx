@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: slsa-provenance
+on:
+  workflow_dispatch:
+
+jobs:
+  provenance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate SLSA provenance attestation
+        uses: slsa-framework/slsa-github-generator/actions/attest-build-provenance@v2.0.0
+        with:
+          subject-path: "dist/*"

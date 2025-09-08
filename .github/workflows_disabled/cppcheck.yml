@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: cppcheck
+on: [push, pull_request]
+jobs:
+  cppcheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install cppcheck
+        run: sudo apt-get update && sudo apt-get install -y cppcheck
+      - name: Run cppcheck
+        run: cppcheck --enable=warning,performance,portability,style --inline-suppr --error-exitcode=1 -I include src 2> cppcheck.txt || (cat cppcheck.txt && exit 1)

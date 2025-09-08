@@ -1,0 +1,37 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: diffoscope
+on:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  diffoscope:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install diffoscope
+        run: sudo apt-get update && sudo apt-get install -y diffoscope
+      - name: Build #1
+        env: { SOURCE_DATE_EPOCH: "1" }
+        run: cmake -S . -B b1 -DCMAKE_BUILD_TYPE=Release && cmake --build b1 -j
+      - name: Build #2
+        env: { SOURCE_DATE_EPOCH: "1" }
+        run: cmake -S . -B b2 -DCMAKE_BUILD_TYPE=Release && cmake --build b2 -j
+      - name: Run diffoscope (best-effort)
+        run: |
+          if [ -d b1/bin ] && [ -d b2/bin ]; then
+            for f in $(ls b1/bin); do
+              if [ -f "b2/bin/$f" ]; then
+                diffoscope --html report-$f.html b1/bin/$f b2/bin/$f || true
+              fi
+            done
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: diffoscope-reports
+          path: "*.html"

@@ -1,0 +1,23 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "BioSimX-PINNACLE",
+  "documentNamespace": "http://spdx.org/spdxdocs/biosimx-pinnacle-2025-08-27",
+  "creationInfo": {
+    "creators": [
+      "Tool: ChatGPT Packaging Helper"
+    ],
+    "created": "2025-08-27T00:00:00Z"
+  },
+  "packages": [
+    {
+      "name": "BioSimX",
+      "SPDXID": "SPDXRef-Package-BioSimX",
+      "versionInfo": "1.2.0",
+      "licenseDeclared": "MIT",
+      "supplier": "Organization: BioSimX Project",
+      "downloadLocation": "NOASSERTION"
+    }
+  ]
+}

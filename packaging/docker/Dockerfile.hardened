@@ -1,0 +1,6 @@
+
+# Hardened runtime image
+FROM gcr.io/distroless/cc AS runtime
+USER 65532:65532
+COPY --from=build /app/build/bin/biosimx /usr/local/bin/biosimx
+ENTRYPOINT ["/usr/local/bin/biosimx"]

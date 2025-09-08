@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+name-template: 'v$NEXT_PATCH_VERSION'
+tag-template: 'v$NEXT_PATCH_VERSION'
+categories:
+  - title: 🚀 Features
+    labels: [feat, feature]
+  - title: 🐛 Fixes
+    labels: [fix, bug]
+  - title: 🧹 Chores
+    labels: [chore, ci, build, docs]
+change-template: '- $TITLE (#$NUMBER) @$AUTHOR'

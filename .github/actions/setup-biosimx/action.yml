@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+name: 'Setup BioSimX build env'
+description: 'Install basic toolchain (cmake, ninja)'
+runs:
+  using: 'composite'
+  steps:
+    - shell: bash
+      run: |
+        if command -v apt-get >/dev/null; then sudo apt-get update && sudo apt-get install -y cmake ninja-build g++; fi
+        if command -v brew >/dev/null; then brew install cmake ninja; fi

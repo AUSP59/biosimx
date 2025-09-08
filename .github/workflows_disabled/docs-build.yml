@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: docs-build
+on: [push, pull_request]
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Doxygen
+        run: |
+          sudo apt-get update && sudo apt-get install -y doxygen graphviz
+          doxygen Doxyfile || true
+      - name: MkDocs
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install mkdocs mkdocs-material
+          if [ -f docs/mkdocs.yml ]; then
+            mkdocs build -f docs/mkdocs.yml
+          else
+            echo 'site_name: Docs' > mkdocs.yml
+            mkdocs build
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docs-site
+          path: site

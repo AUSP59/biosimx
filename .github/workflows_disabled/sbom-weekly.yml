@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: sbom-weekly
+on:
+  schedule:
+    - cron: '37 2 * * 1'
+jobs:
+  sbom:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anchore/sbom-action/download-syft@v0.17.2
+      - name: Generate SBOM
+        run: ./syft dir:. -o spdx-json=sbom.spdx.json || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom-weekly
+          path: sbom.spdx.json

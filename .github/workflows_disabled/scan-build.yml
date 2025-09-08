@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: scan-build
+on: [pull_request, push]
+jobs:
+  analyze:
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install clang-tools
+        run: sudo apt-get update && sudo apt-get install -y clang-tools
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - name: scan-build
+        run: scan-build -o scan --status-bugs cmake --build build -j || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: scan-build-report
+          path: scan

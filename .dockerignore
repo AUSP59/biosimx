@@ -1,0 +1,11 @@
+.git
+.git/*
+build
+build-*
+dist
+site
+.ccache
+*.log
+*.gcno
+*.gcda
+*.profraw

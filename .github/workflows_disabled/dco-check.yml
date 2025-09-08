@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+name: dco-check
+on:
+  pull_request:
+jobs:
+  dco:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Signed-off-by
+        run: |
+          set -e
+          COMMITS=$(git rev-list --no-merges ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }})
+          for c in $COMMITS; do
+            msg=$(git log -1 --pretty=%B $c)
+            echo "Checking DCO for commit $c"
+            echo "$msg" | grep -qi "Signed-off-by:" || (echo "Missing Signed-off-by in commit $c" && exit 1)
+          done

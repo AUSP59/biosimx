@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: If you use BioSimX, please cite it as below.
+title: BioSimX
+version: 1.0.0
+date-released: 2025-08-27
+authors:
+  - family-names: Doe
+    given-names: Jane
+repository-code: https://example.org/biosimx
+license: MIT

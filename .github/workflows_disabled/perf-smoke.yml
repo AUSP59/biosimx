@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+name: perf-smoke
+on:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  perf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build release
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build -j
+      - name: Run quick perf
+        run: |
+          if [ -x build/bin/biosimx ]; then
+            /usr/bin/time -f "%E real, %M KB maxrss" build/bin/biosimx --help >/dev/null || true
+          else
+            echo "CLI not found; skipping."
+          fi

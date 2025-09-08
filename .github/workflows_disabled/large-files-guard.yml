@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: large-files-guard
+on: [pull_request]
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for large files (>10MB)
+        run: |
+          max=10485760
+          bad=$(git ls-files -s | awk '{print $4}' | xargs -I{} bash -c 'f="{}"; [ -f "$f" ] && s=$(stat -c%s "$f" 2>/dev/null || wc -c < "$f"); [ "$s" -gt '$max' ] && echo "$f ($s bytes)"')
+          if [ -n "$bad" ]; then
+            echo "Large files detected:"
+            echo "$bad"
+            exit 1
+          fi

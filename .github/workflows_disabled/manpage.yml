@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: manpage
+on:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  man:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install help2man
+        run: sudo apt-get update && sudo apt-get install -y help2man
+      - name: Build
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build -j
+      - name: Generate man page
+        run: |
+          if [ -x build/bin/biosimx ]; then
+            help2man -N -n "BioSimX CLI" -o man/biosimx.1 build/bin/biosimx || true
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: manpage
+          path: man/

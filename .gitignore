@@ -1,0 +1,51 @@
+# Build artifacts
+/build/
+/build-*/
+b*/
+CMakeCache.txt
+CMakeFiles/
+*.o
+*.obj
+*.lo
+*.la
+*.a
+*.so*
+*.dylib
+*.dll
+*.lib
+*.exe
+*.pdb
+*.ilk
+*.dSYM/
+
+# Generators
+compile_commands.json
+Testing/
+CTestTestfile.cmake
+_install/
+install_manifest.txt
+
+# IDEs
+.vscode/
+.idea/
+*.code-workspace
+
+# Python
+__pycache__/
+*.pyc
+
+# Site/Dist
+/site/
+/dist/
+
+# Coverage
+*.gcda
+*.gcno
+*.profraw
+*.profdata
+coverage.info
+
+# Misc
+*.log
+.DS_Store
+Thumbs.db

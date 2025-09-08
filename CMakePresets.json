@@ -1,0 +1,16 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": { "major": 3, "minor": 23, "patch": 0 },
+  "configurePresets": [
+    { "name": "default", "generator": "Ninja", "binaryDir": "build", "cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo" } },
+    { "name": "release", "inherits": "default", "cacheVariables": { "CMAKE_BUILD_TYPE": "Release", "BIOSIMX_ENABLE_LTO":"ON" } },
+    { "name": "asan", "inherits": "default", "cacheVariables": { "CMAKE_CXX_FLAGS":"-fsanitize=address,undefined -fno-omit-frame-pointer" } },
+    { "name": "tsan", "inherits": "default", "cacheVariables": { "CMAKE_CXX_FLAGS":"-fsanitize=thread -fno-omit-frame-pointer" } }
+  ],
+  "buildPresets": [
+    { "name": "default", "configurePreset": "default" },
+    { "name": "release", "configurePreset": "release" },
+    { "name": "asan", "configurePreset": "asan" },
+    { "name": "tsan", "configurePreset": "tsan" }
+  ]
+}

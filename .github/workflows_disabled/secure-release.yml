@@ -1,0 +1,81 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: secure-release
+on:
+  workflow_dispatch:
+
+jobs:
+  build-sign-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build (Release)
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build -j
+
+      - name: Package artifact
+        run: |
+          mkdir -p dist
+          if [ -d build/bin ]; then
+            tar -C build/bin -czf dist/biosimx-linux-amd64.tar.gz .
+          else
+            echo "No bin/ directory found; packaging skipped." && ls -la build || true
+          fi
+
+      - name: Install Syft
+        uses: anchore/sbom-action/download-syft@v0.17.2
+
+      - name: Generate SBOM (SPDX and CycloneDX)
+        run: |
+          if [ -f dist/biosimx-linux-amd64.tar.gz ]; then
+            ./syft packages file:dist/biosimx-linux-amd64.tar.gz -o spdx-json=dist/sbom.spdx.json || ./syft dir:. -o spdx-json=dist/sbom.spdx.json
+          else
+            ./syft dir:. -o spdx-json=dist/sbom.spdx.json
+          fi
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.6.0
+
+      - name: Compute SHA256
+        id: shasum
+        run: |
+          cd dist
+          for f in *; do
+            [ -f "$f" ] || continue
+            sha256sum "$f" >> SHA256SUMS.txt
+          done
+          cat SHA256SUMS.txt
+
+      - name: Sign artifacts with keyless Cosign
+        env:
+          COSIGN_EXPERIMENTAL: "1"
+        run: |
+          set -e
+          cd dist
+          for f in *; do
+            [ -f "$f" ] || continue
+            cosign sign-blob --yes --output-certificate "$f.cert" --output-signature "$f.sig" "$f"
+          done
+
+      - name: Create GitHub Release & upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/biosimx-linux-amd64.tar.gz
+            dist/sbom.spdx.json
+            dist/SHA256SUMS.txt
+            dist/sbom.cyclonedx.json
+            dist/*.sig
+            dist/*.cert
+
+      - name: Generate build provenance
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: 'dist/biosimx-linux-amd64.tar.gz'

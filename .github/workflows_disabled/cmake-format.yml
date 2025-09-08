@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+name: cmake-format
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+jobs:
+  cmfmt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install cmake-format
+        run: pipx install cmake-format || pip install cmake-format
+      - name: Check cmake files
+        run: |
+          python - << 'PY'
+import os, subprocess, sys
+paths = []
+for root, _, files in os.walk('.'):
+    for f in files:
+        if f in ('CMakeLists.txt',) or f.endswith('.cmake'):
+            paths.append(os.path.join(root,f))
+bad = 0
+for p in paths:
+    res = subprocess.run(['cmake-format', p], capture_output=True, text=True)
+    if res.returncode != 0:
+        print(res.stderr); bad = 1
+PY

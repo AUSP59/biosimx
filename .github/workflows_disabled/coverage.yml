@@ -1,0 +1,43 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: coverage
+on: [pull_request]
+jobs:
+  cov:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install lcov
+        run: sudo apt-get update && sudo apt-get install -y lcov
+      - name: Build with coverage
+        env:
+          CXXFLAGS: "--coverage"
+          LDFLAGS: "--coverage"
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+          cmake --build build -j
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure || true
+      - name: Collect coverage
+        run: |
+          lcov --capture --directory build --output-file coverage.info || true
+          lcov --remove coverage.info '/usr/*' --output-file coverage.info || true
+          lcov --list coverage.info || true
+          pct=$(lcov --list coverage.info 2>/dev/null | awk '/lines\.*:/{print $2}' | tail -n1 | sed 's/%//')
+          echo "COVERAGE=$pct" >> $GITHUB_ENV
+      - name: Enforce threshold
+        env:
+          MIN_COVERAGE: "40"
+        run: |
+          pct="${COVERAGE:-0}"
+          echo "Line coverage: $pct% (min $MIN_COVERAGE%)"
+          awk -v p="$pct" -v m="$MIN_COVERAGE" 'BEGIN{exit (p+0<m)}'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-info
+          path: coverage.info

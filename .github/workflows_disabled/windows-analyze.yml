@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+name: windows-analyze
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+jobs:
+  analyze:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup sccache
+        uses: mozilla-actions/sccache-action@v0.0.3
+      - name: Configure with /analyze
+        run: >
+          cmake -S . -B build -G "Visual Studio 17 2022"
+          -DCMAKE_CXX_FLAGS="/analyze"
+          -DCMAKE_C_COMPILER_LAUNCHER=sccache -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+      - name: Build
+        run: cmake --build build --config Release -j

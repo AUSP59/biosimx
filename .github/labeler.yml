@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+area/docs:
+- docs/**
+- README.md
+ci:
+- .github/**
+
+security:
+- SECURITY.md
+- docs/security/**
+
+size/XS:
+- changed-files: 0..9
+size/S:
+- changed-files: 10..99
+size/M:
+- changed-files: 100..399
+size/L:
+- changed-files: 400..999
+size/XL:
+- changed-files: 1000..

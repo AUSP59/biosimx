@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+site_name: BioSimX Documentation
+repo_url: https://example.org/biosimx
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Policies:
+      - Security: ../SECURITY.md
+      - Governance: ../GOVERNANCE.md
+      - Code of Conduct: ../CODE_OF_CONDUCT.md
+      - Support Policy: support-policy.md
+  - Developer:
+      - Hacking: ../HACKING.md
+      - CMake Options: cmake-options.md
+      - ADRs: adr/
+  - Reference:
+      - CLI Manpage: ../man/biosimx.1
+      - API (Doxygen): doxygen/

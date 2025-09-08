@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+name: fuzz-nightly
+on:
+  schedule: [{ cron: '14 2 * * *' }]
+jobs:
+  fuzz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure (fuzz)
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+      - name: Build
+        run: cmake --build build -j
+      - name: Run fuzzers (time-limited)
+        run: |
+          if [ -d fuzz ]; then
+            for t in $(ls fuzz | sed -n 's/\(.*\)\.cpp/\1/p'); do
+              echo "Fuzzing $t for 120s"; timeout 120s ./build/fuzz/$t || true
+            done
+          fi

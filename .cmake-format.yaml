@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+line_width: 120
+indent_width: 2
+tab_size: 2
+max_subgroups_hwrap: 3
+separate_ctrl_name_with_space: True
+separate_fn_name_with_space: True

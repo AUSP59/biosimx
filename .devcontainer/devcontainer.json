@@ -1,0 +1,23 @@
+{
+  "name": "BioSimX C++ Dev",
+  "image": "mcr.microsoft.com/devcontainers/cpp:0-ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/llvm:1": {},
+    "ghcr.io/devcontainers/features/cmake:1": {},
+    "ghcr.io/devcontainers/features/ninja:1": {},
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/python:1": {}
+  },
+  "postCreateCommand": "bash tools/dev/bootstrap.sh || true",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools-extension-pack",
+        "ms-vscode.cmake-tools",
+        "eamodio.gitlens",
+        "streetsidesoftware.code-spell-checker"
+      ]
+    }
+  },
+  "remoteUser": "vscode"
+}

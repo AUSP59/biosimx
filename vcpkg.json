@@ -1,0 +1,7 @@
+{
+  "name": "biosimx",
+  "version-string": "1.0.0",
+  "description": "Deterministic C++ biosimulation engine",
+  "homepage": "https://example.org/biosimx",
+  "dependencies": []
+}

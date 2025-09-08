@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: include-what-you-use
+on: [pull_request]
+jobs:
+  iwyu:
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install IWYU
+        run: sudo apt-get update && sudo apt-get install -y iwyu || sudo apt-get install -y include-what-you-use || true
+      - name: Build compile_commands.json
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && ln -sf build/compile_commands.json .
+      - name: Run IWYU (headers only, best-effort)
+        run: |
+          if command -v iwyu >/dev/null; then tool=iwyu; elif command -v include-what-you-use >/dev/null; then tool=include-what-you-use; else exit 0; fi
+          find include -name '*.h' -o -name '*.hpp' | xargs -r -n1 $tool -Xiwyu --mapping_file=/dev/null || true

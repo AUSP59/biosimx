@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+name: Feature request
+description: Propose an idea
+labels: [enhancement]
+body:
+  - type: textarea
+    id: proposal
+    attributes: { label: Proposal }
+    validations: { required: true }

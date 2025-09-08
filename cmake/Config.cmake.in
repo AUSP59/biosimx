@@ -1,0 +1,16 @@
+# cmake/Config.cmake.in
+@PACKAGE_INIT@
+
+# Provide an imported executable target so consumers can reference biosimx::cli
+if (NOT TARGET biosimx::cli)
+  add_executable(biosimx::cli IMPORTED GLOBAL)
+  get_filename_component(_pkg_root "{{CMAKE_CURRENT_LIST_DIR}}" DIRECTORY) # .../lib/cmake/BioSimX
+  get_filename_component(_prefix "{{_pkg_root}}" DIRECTORY)                # .../lib/cmake -> .../lib
+  get_filename_component(_prefix "{{_prefix}}" DIRECTORY)                  # .../lib -> ...
+  if (WIN32)
+    set(_exe_name "biosimx.exe")
+  else()
+    set(_exe_name "biosimx")
+  endif()
+  set_target_properties(biosimx::cli PROPERTIES IMPORTED_LOCATION "{{_prefix}}/bin/${_exe_name}")
+endif()

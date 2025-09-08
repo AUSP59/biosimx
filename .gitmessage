@@ -1,0 +1,6 @@
+feat: <concise summary>
+
+Body: Explain what and why. Reference issues like #123.
+BREAKING CHANGE: describe breaking change if any
+
+Signed-off-by: Your Name <you@example.com>

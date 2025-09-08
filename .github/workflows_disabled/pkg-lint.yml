@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: packaging-lint
+on: [pull_request]
+jobs:
+  deb:
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install lintian
+        run: sudo apt-get update && sudo apt-get install -y lintian
+      - name: Lint debian/ (best-effort)
+        run: lintian --display-experimental --pedantic || true
+  rpm:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install rpmlint
+        run: sudo apt-get update && sudo apt-get install -y rpmlint || true
+      - name: Lint spec (best-effort)
+        run: rpmlint packaging/rpm/*.spec || true

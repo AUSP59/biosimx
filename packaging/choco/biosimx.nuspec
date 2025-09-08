@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>biosimx</id>
+    <version>1.0.0</version>
+    <title>BioSimX CLI</title>
+    <authors>BioSimX Contributors</authors>
+    <projectUrl>https://example.org/biosimx</projectUrl>
+    <licenseUrl>https://raw.githubusercontent.com/ORG/BioSimX/main/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Deterministic C++ biosimulation CLI.</description>
+    <tags>biosimulation c++ cli</tags>
+  </metadata>
+</package>

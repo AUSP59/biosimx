@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+extends: default
+rules:
+  line-length:
+    max: 140
+    allow-non-breakable-words: true
+  truthy:
+    allowed-values: ['true','false','on','off','yes','no']

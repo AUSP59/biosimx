@@ -1,0 +1,8 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: BioSimX
+Upstream-Contact: BioSimX Maintainers <maintainers@biosimx.org>
+Source: https://example.org/biosimx
+
+Files: *
+Copyright: 2025 BioSimX Contributors
+License: MIT

@@ -1,0 +1,5 @@
+biosimx (1.0.0-1) unstable; urgency=medium
+
+  * Initial release (packaging scaffold).
+
+ -- BioSimX Maintainers <maintainers@biosimx.org>  Wed, 27 Aug 2025 22:24:46 +0000

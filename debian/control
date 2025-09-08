@@ -1,0 +1,10 @@
+Source: biosimx
+Section: utils
+Priority: optional
+Maintainer: BioSimX Maintainers <maintainers@biosimx.org>
+Standards-Version: 4.6.2
+
+Package: biosimx
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Deterministic C++ biosimulation engine

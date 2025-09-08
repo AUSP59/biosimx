@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: binary-size-budget
+on: [pull_request]
+jobs:
+  size:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build release
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build -j
+      - name: Enforce size budget
+        env:
+          MAX_KB: "25000"
+        run: |
+          if [ -d build/bin ]; then
+            over=0
+            for f in build/bin/*; do
+              [ -f "$f" ] || continue
+              sz=$(du -k "$f" | awk '{print $1}')
+              echo "$f => ${sz}KB"
+              if [ "$sz" -gt "$MAX_KB" ]; then over=1; fi
+            done
+            exit $over
+          fi

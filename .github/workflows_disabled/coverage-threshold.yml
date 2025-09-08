@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: 2025 AUSP59 <alanursapu@gmail.com>
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+name: coverage-threshold
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+jobs:
+  cover-threshold:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install lcov
+        run: sudo apt-get update && sudo apt-get install -y lcov
+      - name: Build with coverage
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="--coverage" -DCMAKE_EXE_LINKER_FLAGS="--coverage"
+      - name: Build
+        run: cmake --build build -j
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+      - name: Collect coverage
+        run: lcov --capture --directory build --output-file coverage.info && lcov --remove coverage.info '/usr/*' '*/tests/*' --output-file coverage.info
+      - name: Enforce threshold
+        env:
+          MIN_COVERAGE: "60"
+        run: |
+          percent=$(lcov --list coverage.info | awk '/lines\.*:/{print $2}' | tail -1 | sed 's/%//')
+          echo "Coverage: $percent%"
+          awk -v p="$percent" -v m="$MIN_COVERAGE" 'BEGIN{ exit (p+0 < m+0) ? 1 : 0 }'
